@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const ejs = require('ejs')
 
+
 const { 
   displayDashboard,
   fetchProducts,
@@ -12,11 +13,11 @@ const {
 
 // const {
 //   validateProductMiddleware
-// } = require('./src/middlewares/validateProduct')
+// } = require('./src/middleware/validateProduct.js')
 
-// const {
-//   validationRules
-// } = require ('./src/middlewares/validateProduct')
+const {
+  validationRules
+} = require ('./src/middleware/validateProduct')
 
 const app = express()
 
@@ -34,11 +35,11 @@ app.get('/', (req, res) => {
 app.get('/dashboard', displayDashboard)
 
 // READ: GET /products
-app.get('/products', fetchProducts)
+app.get('/products',fetchProducts)
 
 // CREATE: POST /products
 // app.post('/products', validateProductMiddleware, createProduct)
-app.post('/products', createProduct)
+app.post('/products',validationRules, createProduct)
 
 // UPDATE: PATCH /products/:id
 app.patch('/products/:id', updateProduct)

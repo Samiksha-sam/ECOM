@@ -1,5 +1,6 @@
 const path = require('path')
 const { getP, createP,updateP,deleteP } = require('../models/products.js')
+const { validationResult } = require('express-validator')
 
 const displayDashboard = (req,res) => {
     const products = getP()
@@ -16,35 +17,15 @@ const fetchProducts = (req,res) => {
 
 const createProduct = (req,res) => {
     const products = getP()
-    const errors = []
-    const {title, currentPrice,mrp, imageURL} = req.body
-
-    //Title : cannot be empty and it  cannot be less than 3 characters
-    if(title == '' || title.length < 3){
-        errors.push('Incorrect product title')
-    }
-
-    //currentPrice : cannot be empty and can not be non numeric
-    if(currentPrice=='' || isNaN(Number(currentPrice))){
-        errors.push('Incorrect curentPrice')
-    }
-
-    //mrp : cannot be empty and can not be non numeric
-    if(mrp=='' || isNaN(Number(mrp))){
-        errors.push('Incorrect M.R.P')
-    }
-
-    //Image URL : cannot be empty and it has to be valid url
-    try{
-        const url1 = new URL(imageURL)
-    }catch(error){
-        errors.push('Incorrect Image URL')
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.render('dashboard', {
+            products,
+            errorMessage:errors.array()[0].msg
+        })
     }
     
-    if(errors.length!=0){
-        return res.render('dashboard',{products,errorMessage:errors[0]})
-    }
-
+    const {title, currentPrice,mrp, imageURL} = req.body
     const newProduct = {title, currentPrice,mrp, imageURL}
     createP(newProduct)
     res.redirect('/dashboard')
